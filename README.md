@@ -1,5 +1,8 @@
 # ChatGPT Markdown Formatter
 
+## 🌟 Live Demo: [printchatgpt.lukhausen.de](https://printchatgpt.lukhausen.de/) 🌟
+**Try the live demo now!** See how your ChatGPT conversations can be beautifully formatted for printing.
+
 A powerful web application for formatting ChatGPT conversations with real-time Markdown rendering, code syntax highlighting, and LaTeX math equation support.
 
 ## 🚀 Features
