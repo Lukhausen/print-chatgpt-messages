@@ -1,11 +1,35 @@
 import './style.css'
+import './print.css' // Import print-specific styles
+import hljs from 'highlight.js';
+// Import a default style
+import 'highlight.js/styles/atom-one-light.css';
+import { marked } from 'marked';
 
 /* Main JavaScript for Markdown Preview Tool for ChatGPT Content */
+
+// Enable debug mode for development
+// In production, you would want to use safeMode() instead
+hljs.debugMode();
 
 // Wait for the DOM to be fully loaded before executing code
 document.addEventListener('DOMContentLoaded', () => {
   const textarea = document.getElementById('markdown-input');
   const preview = document.getElementById('preview');
+  const printButton = document.getElementById('print-button');
+  const clearButton = document.getElementById('clear-button');
+
+  // Configure highlight.js to only consider common languages for auto-detection
+  // This improves detection accuracy and significantly reduces processing time
+  hljs.configure({
+    languages: [
+      // Web development
+      'html', 'css', 'javascript', 'typescript', 'jsx', 'xml', 'json',
+      // Backend languages
+      'python', 'java', 'c', 'cpp', 'csharp', 'php', 'ruby', 'go', 'rust',
+      // Shell and configuration
+      'bash', 'powershell', 'yaml', 'markdown', 'sql'
+    ]
+  });
 
   // Configure marked for code highlighting (default option provided for explicit languages)
   marked.setOptions({
@@ -62,19 +86,34 @@ document.addEventListener('DOMContentLoaded', () => {
       if (explicitLangClass) {
         // Remove prefix to get language name
         language = explicitLangClass.replace('language-', '');
-        // Use explicit highlighting
+        // Use explicit highlighting with the latest API
         hljs.highlightElement(block);
       } else {
-        // Use automatic detection
+        // Use automatic detection with our restricted language set
         const result = hljs.highlightAuto(block.textContent);
-        block.innerHTML = result.value;
         language = result.language || 'auto';
+        
+        // Apply the detected language class
+        block.classList.add(`language-${language}`);
+        // Apply highlighting with the detected language
+        block.innerHTML = result.value;
       }
 
       // Create a label element to display the language
       const label = document.createElement('span');
       label.className = 'language-label';
-      label.textContent = language;
+      
+      // Add extra class for auto-detected languages
+      if (language === 'auto' || !explicitLangClass) {
+        label.classList.add('language-auto');
+      }
+      
+      // Create a span for the language name (always uppercase)
+      const languageName = document.createElement('span');
+      languageName.className = 'language-name';
+      languageName.textContent = language.toUpperCase();
+      label.appendChild(languageName);
+      
       pre.appendChild(label);
     });
   }
@@ -93,6 +132,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Update preview when user types
   textarea.addEventListener('input', () => debouncedRender(textarea.value));
+  
+  // Handle print button click
+  if (printButton) {
+    printButton.addEventListener('click', () => {
+      window.print();
+    });
+  }
+  
+  // Handle clear button click
+  if (clearButton) {
+    clearButton.addEventListener('click', () => {
+      // Clear the textarea
+      textarea.value = '';
+      // Update the preview with empty content
+      renderMarkdown('');
+      // Focus the textarea for immediate typing
+      textarea.focus();
+    });
+  }
+
+  // Print preparation - ensure content displays properly when printing
+  window.addEventListener('beforeprint', () => {
+    // Force all code blocks to have no height restrictions
+    document.querySelectorAll('pre, code, #preview, table').forEach(el => {
+      el.style.maxHeight = 'none';
+      el.style.height = 'auto';
+      el.style.overflow = 'visible';
+    });
+    
+    // Make tables display as table instead of block
+    document.querySelectorAll('table').forEach(table => {
+      table.style.display = 'table';
+    });
+  });
 
   // Initial rendering with an empty string
   renderMarkdown('');

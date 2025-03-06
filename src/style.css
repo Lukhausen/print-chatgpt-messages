@@ -26,10 +26,15 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  max-width: 100%;
 }
 
 html {
   font-size: 16px;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto; /* Ensure vertical scrolling is always enabled */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 body {
@@ -37,36 +42,62 @@ body {
   flex-direction: column;
   font-family: var(--font-primary);
   line-height: 1.6;
-  min-height: 100vh;
+  min-height: 100%;
+  height: auto; /* Allow body to grow as needed */
   background-color: var(--color-bg);
+  width: 100%;
+  overflow-y: auto; /* Ensure vertical scrolling */
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  position: relative; /* For proper positioning */
 }
 
 main {
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 100vh;
+  min-height: 100%;
+  height: auto; /* Allow to grow with content */
+  padding: 0;
+  margin: 0;
+  overflow-y: auto; /* Enable scrolling */
 }
 
 /* Layout - stacked panels for mobile */
 #editor, #preview {
   width: 100%;
+  max-width: 100%;
   padding: var(--space-sm);
+  box-sizing: border-box;
+  overflow-y: auto; /* Ensure both sections can scroll */
 }
 
 #editor {
   border-bottom: 1px solid var(--color-border);
-  min-height: 50vh;
+  min-height: 45vh; /* Keep as vh for proper sizing on mobile */
+  display: flex;
+  flex-direction: column;
+  padding-bottom: var(--space); /* Add space at the bottom of the editor section */
+  height: auto; /* Allow content to determine height */
 }
 
 #preview {
-  min-height: 50vh;
+  min-height: 55vh;
+  max-height: none;
   overflow-y: auto;
+  overflow-x: hidden;
+  height: auto;
+  padding: var(--space);
+  line-height: 1.7;
+  font-family: var(--font-content);
+  color: var(--color-text);
+  letter-spacing: 0.01em;
 }
 
 /* Editor header */
 header {
-  margin-bottom: var(--space);
+  margin-bottom: var(--space-sm);
 }
 
 header h1 {
@@ -77,6 +108,95 @@ header h1 {
 header p {
   font-size: 0.9rem;
   margin-bottom: var(--space-sm);
+}
+
+/* Button group styling */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* Common button styling */
+.button-group button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-primary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  flex: 1; /* Make buttons fill available space equally */
+  min-width: 0; /* Allow button to shrink if needed */
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+.button-group button:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-100%);
+  transition: transform 0.2s ease;
+}
+
+.button-group button:active:after {
+  transform: translateY(0);
+  opacity: 0;
+  transition: transform 0s, opacity 0.2s ease;
+}
+
+/* Print button styling - changed from blue to a more neutral color */
+#print-button {
+  background-color: #4a5568;
+  color: white;
+}
+
+#print-button:hover {
+  background-color: #2d3748;
+}
+
+#print-button:active {
+  background-color: #1a202c;
+}
+
+/* Clear button styling - changed to a more neutral style */
+#clear-button {
+  background-color: #e57373; /* Light red color */
+  color: white;
+}
+
+#clear-button:hover {
+  background-color: #ef5350; /* Slightly darker red on hover */
+}
+
+#clear-button:active {
+  background-color: #e53935; /* Even darker red when active */
+}
+
+/* Button icons */
+.button-group button svg {
+  flex-shrink: 0;
+}
+
+@media print {
+  .button-group {
+    display: none;
+  }
 }
 
 kbd {
@@ -92,7 +212,8 @@ kbd {
 /* Editor input */
 textarea {
   width: 100%;
-  height: 30vh;
+  max-width: 100%;
+  height: 25vh;
   padding: var(--space-sm);
   border: 1px solid var(--color-border);
   border-radius: 4px;
@@ -102,121 +223,216 @@ textarea {
   background: var(--color-input-bg);
   color: var(--color-text-secondary);
   outline: none;
+  flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100% - 120px); /* Adjusted to make room for buttons */
+  min-height: 150px; /* Ensure there's always enough space to type */
+  margin-bottom: 1rem; /* Proper spacing between textarea and buttons */
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS devices */
 }
 
-/* Preview typography */
+/* Preview typography and spacing improvements */
 #preview {
+  min-height: 55vh;
+  max-height: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: auto;
+  padding: var(--space);
+  line-height: 1.7;
   font-family: var(--font-content);
   color: var(--color-text);
-  padding: var(--space);
+  letter-spacing: 0.01em;
 }
 
+/* Headings with improved spacing and typography */
 #preview h1, #preview h2, #preview h3, 
 #preview h4, #preview h5, #preview h6 {
   font-family: var(--font-headings);
-  margin: 1em 0 0.5em;
+  margin: 1.5em 0 0.7em;
   line-height: 1.3;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
 }
 
-#preview h1 { font-size: 1.75rem; }
-#preview h2 { font-size: 1.5rem; }
-#preview h3 { font-size: 1.25rem; }
-#preview h4 { font-size: 1.15rem; }
-#preview h5 { font-size: 1rem; }
-#preview h6 { font-size: 0.9rem; }
+#preview h1:first-child, 
+#preview h2:first-child, 
+#preview h3:first-child {
+  margin-top: 0.5em;
+}
 
-#preview p {
+#preview h1 { 
+  font-size: 1.85rem; 
+  font-weight: 700;
   margin-bottom: 1rem;
 }
 
-/* Code blocks */
-pre {
+#preview h2 { 
+  font-size: 1.5rem; 
+  font-weight: 700;
+  padding-bottom: 0.3rem;
+  margin-top: 2rem;
+}
+
+#preview h3 { 
+  font-size: 1.25rem; 
+  font-weight: 600;
+}
+
+#preview h4 { 
+  font-size: 1.15rem; 
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+#preview h5 { 
+  font-size: 1rem; 
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+#preview h6 { 
+  font-size: 0.9rem; 
+  font-weight: 600;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Paragraphs with improved spacing */
+#preview p {
+  margin-bottom: 1.25rem;
+  line-height: 1.7;
+}
+
+/* Lists with improved spacing */
+#preview ul, #preview ol {
+  margin: 1rem 0 1.5rem;
+  padding-left: 1.75rem;
+}
+
+#preview li {
+  margin-bottom: 0.5rem;
+  padding-left: 0.25rem;
+}
+
+#preview li > ul, 
+#preview li > ol {
+  margin: 0.5rem 0;
+}
+
+/* Blockquotes with improved styling */
+#preview blockquote {
+  border-left: 4px solid var(--color-border);
+  margin: 1.5rem 0;
+  padding: 0.75rem 1.25rem;
+  font-style: italic;
   background: var(--color-input-bg);
-  padding: var(--space-sm);
-  margin: var(--space-sm) 0;
-  border-radius: 5px;
+  border-radius: 0 4px 4px 0;
+  color: var(--color-text-secondary);
+}
+
+#preview blockquote p {
+  margin-bottom: 0.5rem;
+}
+
+#preview blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Code blocks with improved styling */
+#preview pre {
+  background: var(--color-input-bg);
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 6px;
   box-shadow: var(--shadow);
   white-space: pre-wrap;
   overflow-x: auto;
   position: relative;
+  max-height: none;
+  font-size: 0.9rem;
 }
 
-code {
-  font-family: var(--font-code);
-  font-size: 0.9em;
-}
-
-/* Language label for code blocks */
-.language-label {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: rgba(0,0,0,0.1);
+/* Inline code with improved styling */
+#preview :not(pre) > code {
+  background-color: var(--color-input-bg);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  border: 1px solid var(--color-border);
   color: var(--color-text-secondary);
-  padding: 0.1rem 0.5rem;
-  font-size: 0.75rem;
-  border-radius: 0 4px 0 4px;
+  white-space: nowrap;
+  font-size: 0.9em;
   font-family: var(--font-code);
 }
 
-/* Tables */
-table {
+/* Tables with improved styling */
+#preview table {
   width: 100%;
   border-collapse: collapse;
-  margin: var(--space-sm) 0;
-  overflow-x: auto;
-  display: block;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
-th, td {
-  border: 1px solid var(--color-border);
-  padding: 0.5rem;
+#preview th {
+  background-color: #f1f1f1;
+  font-weight: 600;
   text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid #e0e0e0;
 }
 
-th {
-  background-color: var(--color-border);
-  font-weight: bold;
+#preview td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
 }
 
-tr:nth-child(even) { background-color: var(--color-input-bg); }
-tr:hover { background-color: var(--color-hover); }
-
-/* Blockquotes */
-blockquote {
-  border-left: 4px solid var(--color-border);
-  margin: var(--space-sm) 0;
-  padding: 0.5rem var(--space-sm);
-  font-style: italic;
-  background: var(--color-input-bg);
+#preview tr:last-child td {
+  border-bottom: none;
 }
 
-/* Links */
-a {
+#preview tr:nth-child(even) { 
+  background-color: var(--color-input-bg); 
+}
+
+#preview tr:hover { 
+  background-color: var(--color-hover); 
+}
+
+/* Links with improved styling */
+#preview a {
   color: #0066cc;
   text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
 }
 
-a:hover {
-  text-decoration: underline;
+#preview a:hover {
+  text-decoration: none;
+  border-bottom: 1px solid #0066cc;
 }
 
-/* Lists */
-ul, ol {
-  margin: 1rem 0;
-  padding-left: 2rem;
+/* Horizontal rule with improved styling */
+#preview hr {
+  height: 1px;
+  background-color: var(--color-border);
+  border: none;
+  margin: 2rem 0;
 }
 
-li {
-  margin-bottom: 0.5rem;
-}
-
-/* Images */
-img {
+/* Images with improved styling */
+#preview img {
   max-width: 100%;
   height: auto;
   display: block;
-  margin: 1rem auto;
+  margin: 1.5rem auto;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 /* Media Queries */
@@ -238,18 +454,71 @@ img {
   header p {
     font-size: 1rem;
   }
+  
+  /* Adjust button group for tablets */
+  .button-group {
+    flex-direction: row;
+  }
+  
+  .button-group button {
+    padding: 0.5rem 1.25rem;
+  }
+  
+  /* Better table handling for wider screens */
+  table {
+    display: table;
+    width: 100%;
+  }
+}
+
+/* Small screens (mobile) */
+@media (max-width: 767px) {
+  body, html {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100%;
+  }
+  
+  main {
+    height: auto;
+    overflow-y: auto;
+  }
+  
+  #editor, #preview {
+    height: auto;
+    overflow-y: auto;
+  }
+  
+  .button-group {
+    flex-direction: row; /* Keep buttons side by side */
+    width: 100%;
+  }
+  
+  .button-group button {
+    width: auto; /* Let flex handle the width */
+    justify-content: center;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  textarea {
+    height: 40vh; /* Taller on mobile for better usability */
+    max-height: none; /* Remove max-height limitation on mobile */
+    overflow-y: auto;
+  }
 }
 
 /* Desktop */
 @media (min-width: 992px) {
   main {
     flex-direction: row;
-    height: 100vh;
+    height: 100vh; /* Use viewport height on desktop */
+    overflow: hidden; /* Prevent main container scrolling */
   }
   
   #editor, #preview {
     width: 50%;
-    height: 100vh;
+    height: 100vh; /* Fixed height on desktop */
     overflow-y: auto;
     min-height: initial;
   }
@@ -257,10 +526,23 @@ img {
   #editor {
     border-right: 1px solid var(--color-border);
     border-bottom: none;
+    display: flex;
+    flex-direction: column;
+    position: fixed; /* Fix the editor in place */
+    left: 0;
+    top: 0;
+    width: 50%; /* Half the screen */
+  }
+  
+  #preview {
+    margin-left: 50%; /* Push the preview to the right half */
+    height: 100vh;
+    overflow-y: auto;
   }
   
   textarea {
-    height: calc(100vh - 120px); /* Subtract header height */
+    height: calc(100vh - 140px);
+    max-height: none;
   }
 }
 
@@ -278,5 +560,141 @@ img {
     width: 100%; 
     height: auto;
     overflow: visible;
+    min-height: auto;
+    max-height: none;
   }
+  
+  /* Remove all height restrictions for elements in preview */
+  #preview * {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  
+  /* Ensure code blocks display properly with border */
+  pre, code {
+    white-space: pre-wrap !important;
+    overflow-x: visible !important;
+    page-break-inside: avoid;
+  }
+  
+  /* Add gray border to code blocks in print view */
+  pre {
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 4px !important;
+    padding: 0.7em 1em !important;
+    margin: 1em 0 !important;
+  }
+  
+  /* Ensure tables display correctly */
+  table {
+    display: table;
+    width: 100%;
+    page-break-inside: avoid;
+  }
+  
+  /* Improve image printing */
+  img {
+    page-break-inside: avoid;
+  }
+  
+  /* Add page breaks before major headings */
+  h1, h2 {
+    page-break-before: auto;
+    page-break-after: avoid;
+  }
+  
+  /* Ensure horizontal separators are visible */
+  hr {
+    border: none !important;
+    border-top: 1px solid #aaa !important;
+    height: 1px !important;
+    background-color: #aaa !important; 
+    margin: 2em 0 !important;
+    width: 100% !important;
+    display: block !important;
+    page-break-inside: avoid !important;
+  }
+}
+
+/* Code block formatting */
+#preview code {
+  font-family: var(--font-code);
+  font-size: 0.9em;
+}
+
+/* Override for code blocks to ensure they're not affected by inline styles */
+#preview pre > code {
+  border: none !important;
+  background: transparent !important;
+  color: inherit;
+  white-space: pre-wrap;
+  display: block;
+  margin: 0;
+  padding: 0;
+  box-shadow: none !important;
+  border-radius: 0;
+  font-size: 0.95em;
+  line-height: 1.5;
+}
+
+/* Remove default highlight.js styling */
+.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Ensure language-specific styling is consistent */
+pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  width: 100%;
+  background: transparent !important;
+}
+
+/* Language label for code blocks */
+.language-label {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: rgba(0,0,0,0.07);
+  color: var(--color-text-secondary);
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  border-radius: 0 6px 0 6px;
+  font-family: var(--font-code);
+  font-weight: 500;
+  z-index: 5;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  opacity: 0.9;
+}
+
+/* Language name styling */
+.language-name {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Auto-detected language styling with ::before for "PROBABLY" indicator */
+.language-label.language-auto .language-name::before {
+  content: 'PROBABLY';
+  display: block;
+  font-size: 0.5rem;
+  line-height: 1;
+  opacity: 0.8;
+  margin-bottom: -0.1rem;
+  letter-spacing: 0.5px;
+  text-align: right;
+  font-weight: normal;
+}
+
+/* Special styling for auto-detected language */
+.language-label.language-auto {
+  background: rgba(255, 165, 0, 0.15);
 }

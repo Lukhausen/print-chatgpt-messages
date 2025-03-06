@@ -20,6 +20,13 @@ A simple, elegant web application for formatting ChatGPT conversations with Mark
 
 This project is built with Vite for fast development and optimized production builds.
 
+### Dependencies
+
+The project uses npm packages instead of CDNs for better reliability and offline development:
+
+- **highlight.js**: Provides code syntax highlighting with automatic language detection
+- **marked**: Markdown parsing and rendering
+
 ### Installation
 
 ```bash
