@@ -1,8 +1,12 @@
 /* Print-specific styles */
 @media print {
-  /* Hide editor, show only preview */
+  /* Hide editor and buttons, show only preview */
   #editor { 
     display: none; 
+  }
+  
+  .button-group {
+    display: none;
   }
   
   #preview { 
@@ -13,6 +17,7 @@
     overflow: visible !important;
     padding: 0 !important;
     margin: 0 !important;
+    margin-left: 0 !important; /* Reset any margin from desktop layout */
   }
   
   /* Remove all height restrictions for elements in preview */

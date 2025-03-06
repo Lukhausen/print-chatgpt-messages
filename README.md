@@ -1,38 +1,52 @@
 # ChatGPT Markdown Formatter
 
-A simple, elegant web application for formatting ChatGPT conversations with Markdown, code highlighting, and LaTeX math rendering.
+A powerful web application for formatting ChatGPT conversations with real-time Markdown rendering, code syntax highlighting, and LaTeX math equation support.
 
-## Features
+## 🚀 Features
 
-- **Instant Markdown Preview**: See your formatted text as you type
-- **Syntax Highlighting**: Automatic language detection for code blocks
-- **LaTeX Math Support**: Render mathematical equations with MathJax
-- **Responsive Design**: Works on mobile, tablet, and desktop
-- **Print to PDF**: Easy export of your formatted content
+- **Real-Time Markdown Preview**: Instantly see your formatted text as you type
+- **Automatic Syntax Highlighting**: Code blocks are automatically detected and highlighted with proper language recognition
+- **Language Detection**: Identifies programming languages in code blocks and displays a label with the detected language
+- **LaTeX Math Rendering**: Display complex mathematical equations with MathJax (supports both inline `$...$` and block `$$...$$` notation)
+- **Responsive Design**: Optimized layout for mobile, tablet, and desktop devices
+- **Print to PDF**: One-click export of beautifully formatted content with optimized styling
+- **Clean Printing**: Print-specific CSS ensures clean output without UI elements and proper page breaks
 
-## Usage
+## 📖 Usage
 
-1. Paste your ChatGPT conversation text into the left panel
-2. See the formatted result in the right panel
-3. To save as PDF, use `Ctrl+P` or `⌘+P` and select "Save as PDF"
+1. **Input**: Paste your ChatGPT conversation text into the left panel
+2. **Preview**: See the formatted result instantly in the right panel
+3. **Print PDF**: Click the "Open Print View" button or use keyboard shortcuts (`Ctrl+P` or `⌘+P`) to save as PDF
+4. **Reset**: Use the "Clear Content" button to start over
 
-## Development
+### Supported Markdown Features
 
-This project is built with Vite for fast development and optimized production builds.
+- Headers (h1-h6)
+- Lists (ordered and unordered)
+- Code blocks with syntax highlighting
+- Inline code
+- Links
+- Images
+- Blockquotes
+- Tables
+- Horizontal rules
+- LaTeX math equations
 
-### Dependencies
+## 💻 Development
 
-The project uses npm packages instead of CDNs for better reliability and offline development:
+This project uses Vite for fast development and optimized production builds.
 
-- **highlight.js**: Provides code syntax highlighting with automatic language detection
-- **marked**: Markdown parsing and rendering
+### Prerequisites
+
+- Node.js (version 18 or higher)
+- npm (comes with Node.js)
 
 ### Installation
 
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/print-chatgpt-messages.git
-cd print-chatgpt-messages/print
+cd print-chatgpt-messages
 
 # Install dependencies
 npm install
@@ -47,7 +61,7 @@ npm run dev
 npm run build
 ```
 
-The built files will be in the `dist` directory.
+The built files will be in the `dist` directory, ready to be deployed to any static file hosting service.
 
 ### Preview Production Build
 
@@ -55,13 +69,38 @@ The built files will be in the `dist` directory.
 npm run preview
 ```
 
-## Technologies Used
+## 🛠 Technical Implementation
 
-- **Vite**: Fast development and optimized builds
-- **Marked**: Markdown parsing
-- **highlight.js**: Code syntax highlighting
-- **MathJax**: Mathematical equation rendering
+### Dependencies
 
-## License
+The application uses npm packages instead of CDNs for better reliability and offline development:
+
+- **marked**: Fast and efficient Markdown parser and compiler
+- **highlight.js**: Code syntax highlighting with automatic language detection
+- **MathJax**: Mathematical equation rendering (loaded from CDN)
+
+### Code Structure
+
+- **index.html**: Main HTML structure with responsive layout
+- **src/main.js**: Core application logic including markdown rendering, highlighting, and event handling
+- **src/style.css**: Main styling for the application interface
+- **src/print.css**: Special styles that only apply when printing
+- **public/favicon.svg**: Document icon for the site
+
+### Key Technical Features
+
+- **Debounced Rendering**: Prevents performance issues during rapid typing
+- **Automatic Language Detection**: Uses highlight.js's language detection for unlabeled code blocks
+- **Print Optimization**: Special event handler ensures content displays properly when printing
+- **LaTeX Pre-processing**: Converts various LaTeX delimiters to standardized format
+
+## 📱 Responsive Behavior
+
+- **Mobile**: Single column layout with editor above preview
+- **Tablet**: Enhanced spacing and font sizes
+- **Desktop**: Side-by-side editor and preview panels
+- **Large Desktop**: Fixed-position editor with scrollable preview
+
+## 📄 License
 
 MIT 

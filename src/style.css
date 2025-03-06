@@ -1,4 +1,9 @@
-/* Core variables */
+/* Import print styles from separate file */
+@import url('./print.css');
+
+/* ==========================================================================
+   1. Core Variables
+   ========================================================================== */
 :root {
   /* Fonts */
   --font-primary: 'Funnel Sans', sans-serif;
@@ -21,7 +26,9 @@
   --space-lg: 2rem;
 }
 
-/* Base styles - Mobile First */
+/* ==========================================================================
+   2. Base & Reset
+   ========================================================================== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -53,6 +60,9 @@ body {
   position: relative; /* For proper positioning */
 }
 
+/* ==========================================================================
+   3. Layout Structure
+   ========================================================================== */
 main {
   display: flex;
   flex-direction: column;
@@ -108,6 +118,44 @@ header h1 {
 header p {
   font-size: 0.9rem;
   margin-bottom: var(--space-sm);
+}
+
+/* ==========================================================================
+   4. Form Elements & Controls
+   ========================================================================== */
+/* Keyboard styles */
+kbd {
+  background-color: var(--color-input-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+  font-family: var(--font-code);
+  font-size: 0.85em;
+  padding: 0.1em 0.5em;
+}
+
+/* Textarea styling */
+textarea {
+  width: 100%;
+  max-width: 100%;
+  height: 25vh;
+  padding: var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  resize: vertical;
+  font-size: 0.95rem;
+  font-family: var(--font-code);
+  background: var(--color-input-bg);
+  color: var(--color-text-secondary);
+  outline: none;
+  flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100% - 120px); /* Adjusted to make room for buttons */
+  min-height: 150px; /* Ensure there's always enough space to type */
+  margin-bottom: 1rem; /* Proper spacing between textarea and buttons */
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS devices */
 }
 
 /* Button group styling */
@@ -193,60 +241,9 @@ header p {
   flex-shrink: 0;
 }
 
-@media print {
-  .button-group {
-    display: none;
-  }
-}
-
-kbd {
-  background-color: var(--color-input-bg);
-  border: 1px solid var(--color-border);
-  border-radius: 3px;
-  box-shadow: 0 1px 1px rgba(0,0,0,0.2);
-  font-family: var(--font-code);
-  font-size: 0.85em;
-  padding: 0.1em 0.5em;
-}
-
-/* Editor input */
-textarea {
-  width: 100%;
-  max-width: 100%;
-  height: 25vh;
-  padding: var(--space-sm);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  resize: vertical;
-  font-size: 0.95rem;
-  font-family: var(--font-code);
-  background: var(--color-input-bg);
-  color: var(--color-text-secondary);
-  outline: none;
-  flex-grow: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  max-height: calc(100% - 120px); /* Adjusted to make room for buttons */
-  min-height: 150px; /* Ensure there's always enough space to type */
-  margin-bottom: 1rem; /* Proper spacing between textarea and buttons */
-  box-sizing: border-box;
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS devices */
-}
-
-/* Preview typography and spacing improvements */
-#preview {
-  min-height: 55vh;
-  max-height: none;
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: auto;
-  padding: var(--space);
-  line-height: 1.7;
-  font-family: var(--font-content);
-  color: var(--color-text);
-  letter-spacing: 0.01em;
-}
-
+/* ==========================================================================
+   5. Typography & Content Styling
+   ========================================================================== */
 /* Headings with improved spacing and typography */
 #preview h1, #preview h2, #preview h3, 
 #preview h4, #preview h5, #preview h6 {
@@ -435,7 +432,95 @@ textarea {
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-/* Media Queries */
+/* ==========================================================================
+   6. Code Highlighting
+   ========================================================================== */
+/* Code block formatting */
+#preview code {
+  font-family: var(--font-code);
+  font-size: 0.9em;
+}
+
+/* Override for code blocks to ensure they're not affected by inline styles */
+#preview pre > code {
+  border: none !important;
+  background: transparent !important;
+  color: inherit;
+  white-space: pre-wrap;
+  display: block;
+  margin: 0;
+  padding: 0;
+  box-shadow: none !important;
+  border-radius: 0;
+  font-size: 0.95em;
+  line-height: 1.5;
+}
+
+/* Remove default highlight.js styling */
+.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Ensure language-specific styling is consistent */
+pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  width: 100%;
+  background: transparent !important;
+}
+
+/* Language label for code blocks */
+.language-label {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: rgba(0,0,0,0.07);
+  color: var(--color-text-secondary);
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  border-radius: 0 6px 0 6px;
+  font-family: var(--font-code);
+  font-weight: 500;
+  z-index: 5;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  opacity: 0.9;
+}
+
+/* Language name styling */
+.language-name {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Auto-detected language styling with ::before for "PROBABLY" indicator */
+.language-label.language-auto .language-name::before {
+  content: 'PROBABLY';
+  display: block;
+  font-size: 0.5rem;
+  line-height: 1;
+  opacity: 0.8;
+  margin-bottom: -0.1rem;
+  letter-spacing: 0.5px;
+  text-align: right;
+  font-weight: normal;
+}
+
+/* Special styling for auto-detected language */
+.language-label.language-auto {
+  background: rgba(255, 165, 0, 0.15);
+}
+
+/* ==========================================================================
+   7. Media Queries
+   ========================================================================== */
 /* Tablet */
 @media (min-width: 768px) {
   #editor, #preview {
@@ -551,150 +636,4 @@ textarea {
   html {
     font-size: 18px;
   }
-}
-
-/* Print layout */
-@media print {
-  #editor { display: none; }
-  #preview { 
-    width: 100%; 
-    height: auto;
-    overflow: visible;
-    min-height: auto;
-    max-height: none;
-  }
-  
-  /* Remove all height restrictions for elements in preview */
-  #preview * {
-    max-height: none !important;
-    overflow: visible !important;
-  }
-  
-  /* Ensure code blocks display properly with border */
-  pre, code {
-    white-space: pre-wrap !important;
-    overflow-x: visible !important;
-    page-break-inside: avoid;
-  }
-  
-  /* Add gray border to code blocks in print view */
-  pre {
-    border: 1px solid #e0e0e0 !important;
-    border-radius: 4px !important;
-    padding: 0.7em 1em !important;
-    margin: 1em 0 !important;
-  }
-  
-  /* Ensure tables display correctly */
-  table {
-    display: table;
-    width: 100%;
-    page-break-inside: avoid;
-  }
-  
-  /* Improve image printing */
-  img {
-    page-break-inside: avoid;
-  }
-  
-  /* Add page breaks before major headings */
-  h1, h2 {
-    page-break-before: auto;
-    page-break-after: avoid;
-  }
-  
-  /* Ensure horizontal separators are visible */
-  hr {
-    border: none !important;
-    border-top: 1px solid #aaa !important;
-    height: 1px !important;
-    background-color: #aaa !important; 
-    margin: 2em 0 !important;
-    width: 100% !important;
-    display: block !important;
-    page-break-inside: avoid !important;
-  }
-}
-
-/* Code block formatting */
-#preview code {
-  font-family: var(--font-code);
-  font-size: 0.9em;
-}
-
-/* Override for code blocks to ensure they're not affected by inline styles */
-#preview pre > code {
-  border: none !important;
-  background: transparent !important;
-  color: inherit;
-  white-space: pre-wrap;
-  display: block;
-  margin: 0;
-  padding: 0;
-  box-shadow: none !important;
-  border-radius: 0;
-  font-size: 0.95em;
-  line-height: 1.5;
-}
-
-/* Remove default highlight.js styling */
-.hljs {
-  background: transparent !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border: none !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
-
-/* Ensure language-specific styling is consistent */
-pre code.hljs {
-  display: block;
-  overflow-x: auto;
-  width: 100%;
-  background: transparent !important;
-}
-
-/* Language label for code blocks */
-.language-label {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: rgba(0,0,0,0.07);
-  color: var(--color-text-secondary);
-  padding: 0.2rem 0.6rem;
-  font-size: 0.7rem;
-  border-radius: 0 6px 0 6px;
-  font-family: var(--font-code);
-  font-weight: 500;
-  z-index: 5;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  opacity: 0.9;
-}
-
-/* Language name styling */
-.language-name {
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-
-/* Auto-detected language styling with ::before for "PROBABLY" indicator */
-.language-label.language-auto .language-name::before {
-  content: 'PROBABLY';
-  display: block;
-  font-size: 0.5rem;
-  line-height: 1;
-  opacity: 0.8;
-  margin-bottom: -0.1rem;
-  letter-spacing: 0.5px;
-  text-align: right;
-  font-weight: normal;
-}
-
-/* Special styling for auto-detected language */
-.language-label.language-auto {
-  background: rgba(255, 165, 0, 0.15);
 }
