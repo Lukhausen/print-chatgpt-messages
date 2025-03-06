@@ -86,6 +86,7 @@ The application uses npm packages instead of CDNs for better reliability and off
 - **src/style.css**: Main styling for the application interface
 - **src/print.css**: Special styles that only apply when printing
 - **public/favicon.svg**: Document icon for the site
+- **vite.config.js**: Build configuration with optimized code splitting
 
 ### Key Technical Features
 
@@ -93,6 +94,28 @@ The application uses npm packages instead of CDNs for better reliability and off
 - **Automatic Language Detection**: Uses highlight.js's language detection for unlabeled code blocks
 - **Print Optimization**: Special event handler ensures content displays properly when printing
 - **LaTeX Pre-processing**: Converts various LaTeX delimiters to standardized format
+- **Dynamic Imports**: Libraries are lazy-loaded for improved initial load time
+- **Manual Chunking**: Vendor dependencies are split into separate files for better caching
+- **On-demand Language Loading**: Syntax highlighting languages are loaded only when needed
+- **Bundle Size Optimization**: Reduced from ~980KB to ~105KB for highlight.js
+
+## 📦 Build Optimization
+
+The project includes several optimizations to ensure fast loading and efficient performance:
+
+1. **Code Splitting**: The application uses dynamic imports to load libraries only when needed
+2. **Granular Loading**: Syntax highlighting languages are loaded on-demand as they're detected
+3. **Chunking Strategy**: 
+   - Core application code (~6KB)
+   - Markdown parser (~40KB)
+   - Syntax highlighting core with on-demand languages (~105KB)
+4. **Preloading Common Languages**: JavaScript, Python, and Bash are preloaded for faster detection
+
+These optimizations result in:
+- Faster initial page load
+- Reduced memory usage
+- Better caching opportunities
+- Improved performance on mobile devices
 
 ## 📱 Responsive Behavior
 

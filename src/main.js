@@ -1,41 +1,101 @@
 import './style.css'
 import './print.css' // Import print-specific styles
-import hljs from 'highlight.js';
-// Import a default style
-import 'highlight.js/styles/atom-one-light.css';
-import { marked } from 'marked';
+
+// We'll dynamically import these heavy libraries
+// import hljs from 'highlight.js';
+// import 'highlight.js/styles/atom-one-light.css';
+// import { marked } from 'marked';
 
 /* Main JavaScript for Markdown Preview Tool for ChatGPT Content */
 
-// Enable debug mode for development
-// In production, you would want to use safeMode() instead
-hljs.debugMode();
-
 // Wait for the DOM to be fully loaded before executing code
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const textarea = document.getElementById('markdown-input');
   const preview = document.getElementById('preview');
   const printButton = document.getElementById('print-button');
   const clearButton = document.getElementById('clear-button');
 
-  // Configure highlight.js to only consider common languages for auto-detection
-  // This improves detection accuracy and significantly reduces processing time
-  hljs.configure({
-    languages: [
-      // Web development
-      'html', 'css', 'javascript', 'typescript', 'jsx', 'xml', 'json',
-      // Backend languages
-      'python', 'java', 'c', 'cpp', 'csharp', 'php', 'ruby', 'go', 'rust',
-      // Shell and configuration
-      'bash', 'powershell', 'yaml', 'markdown', 'sql'
-    ]
-  });
+  // Show loading message in preview until libraries are loaded
+  preview.innerHTML = '<p>Loading editor components...</p>';
 
-  // Configure marked for code highlighting (default option provided for explicit languages)
+  // Dynamically import libraries
+  const [{ default: hljsCore }, { marked }] = await Promise.all([
+    import('highlight.js/lib/core'),
+    import('marked')
+  ]);
+  
+  // Import the CSS separately
+  await import('highlight.js/styles/atom-one-light.css');
+
+  // Define a map for commonly used languages
+  const commonLanguages = {
+    // Web development
+    html: () => import('highlight.js/lib/languages/xml'),
+    css: () => import('highlight.js/lib/languages/css'),
+    javascript: () => import('highlight.js/lib/languages/javascript'),
+    typescript: () => import('highlight.js/lib/languages/typescript'),
+    jsx: () => import('highlight.js/lib/languages/javascript'),
+    json: () => import('highlight.js/lib/languages/json'),
+    // Backend languages
+    python: () => import('highlight.js/lib/languages/python'),
+    java: () => import('highlight.js/lib/languages/java'),
+    c: () => import('highlight.js/lib/languages/c'),
+    cpp: () => import('highlight.js/lib/languages/cpp'),
+    csharp: () => import('highlight.js/lib/languages/csharp'),
+    php: () => import('highlight.js/lib/languages/php'),
+    ruby: () => import('highlight.js/lib/languages/ruby'),
+    go: () => import('highlight.js/lib/languages/go'),
+    rust: () => import('highlight.js/lib/languages/rust'),
+    // Shell and configuration
+    bash: () => import('highlight.js/lib/languages/bash'),
+    powershell: () => import('highlight.js/lib/languages/powershell'),
+    yaml: () => import('highlight.js/lib/languages/yaml'),
+    markdown: () => import('highlight.js/lib/languages/markdown'),
+    sql: () => import('highlight.js/lib/languages/sql')
+  };
+
+  // Load initial common languages
+  const initialLanguages = ['javascript', 'python', 'bash'];
+  
+  // Register initial languages
+  for (const lang of initialLanguages) {
+    const module = await commonLanguages[lang]();
+    hljsCore.registerLanguage(lang, module.default);
+  }
+
+  // Cache for tracking which languages have been loaded
+  const loadedLanguages = new Set(initialLanguages);
+
+  // Function to lazy load a language if needed
+  const ensureLanguageLoaded = async (lang) => {
+    if (!lang || loadedLanguages.has(lang)) return;
+    
+    if (commonLanguages[lang]) {
+      try {
+        const module = await commonLanguages[lang]();
+        hljsCore.registerLanguage(lang, module.default);
+        loadedLanguages.add(lang);
+      } catch (e) {
+        console.warn(`Failed to load language: ${lang}`, e);
+      }
+    }
+  };
+
+  // Enable debug mode for development
+  // In production, you would want to use safeMode() instead
+  hljsCore.debugMode();
+
+  // Clear loading message
+  preview.innerHTML = '';
+
+  // Configure marked for code highlighting
   marked.setOptions({
-    highlight: (code, lang) => {
-      if (lang && hljs.getLanguage(lang)) {
-        return hljs.highlight(code, { language: lang }).value;
+    highlight: async (code, lang) => {
+      if (lang && commonLanguages[lang]) {
+        await ensureLanguageLoaded(lang);
+        if (hljsCore.getLanguage(lang)) {
+          return hljsCore.highlight(code, { language: lang }).value;
+        }
       }
       return code;
     },
@@ -56,24 +116,29 @@ document.addEventListener('DOMContentLoaded', () => {
     preview.innerHTML = marked.parse(processedText);
 
     // Render LaTeX expressions
-    MathJax.typesetPromise([preview])
-      .then(() => {
-        // Once MathJax rendering is complete, apply code highlighting
-        applyHighlighting();
-      })
-      .catch(err => console.log('MathJax error:', err.message));
+    if (window.MathJax) {
+      MathJax.typesetPromise([preview])
+        .then(() => {
+          // Once MathJax rendering is complete, apply code highlighting
+          applyHighlighting();
+        })
+        .catch(err => console.log('MathJax error:', err.message));
+    } else {
+      // If MathJax isn't loaded yet, just apply highlighting
+      applyHighlighting();
+    }
   };
 
   /**
    * Apply syntax highlighting and automatic language detection to all code blocks.
    * For each <pre><code> block:
-   *  - If an explicit language class exists, use hljs.highlightElement.
-   *  - Otherwise, use hljs.highlightAuto to detect the language.
+   *  - If an explicit language class exists, use hljsCore.highlightElement.
+   *  - Otherwise, use autolanguage detection.
    *  - Then, add a small label indicating the language.
    */
   function applyHighlighting() {
     const codeBlocks = preview.querySelectorAll('pre code');
-    codeBlocks.forEach(block => {
+    codeBlocks.forEach(async (block) => {
       const pre = block.parentElement;
       // Ensure the <pre> element is positioned relative for label positioning
       pre.style.position = 'relative';
@@ -86,17 +151,37 @@ document.addEventListener('DOMContentLoaded', () => {
       if (explicitLangClass) {
         // Remove prefix to get language name
         language = explicitLangClass.replace('language-', '');
-        // Use explicit highlighting with the latest API
-        hljs.highlightElement(block);
-      } else {
-        // Use automatic detection with our restricted language set
-        const result = hljs.highlightAuto(block.textContent);
-        language = result.language || 'auto';
         
-        // Apply the detected language class
-        block.classList.add(`language-${language}`);
-        // Apply highlighting with the detected language
-        block.innerHTML = result.value;
+        // Load the language if it's not already loaded
+        if (commonLanguages[language]) {
+          await ensureLanguageLoaded(language);
+        }
+        
+        // Use explicit highlighting with the latest API
+        if (hljsCore.getLanguage(language)) {
+          hljsCore.highlightElement(block);
+        }
+      } else {
+        // For automatic language detection, we need to ensure several languages are loaded
+        // We'll load common languages for auto-detection
+        await Promise.all(['javascript', 'html', 'css', 'python', 'bash', 'markdown']
+          .map(lang => ensureLanguageLoaded(lang)));
+          
+        // Use language detection if we have at least a few languages loaded
+        if (loadedLanguages.size > 0) {
+          try {
+            const result = hljsCore.highlightAuto(block.textContent);
+            language = result.language || 'auto';
+            
+            // Apply the detected language class
+            block.classList.add(`language-${language}`);
+            // Apply highlighting with the detected language
+            block.innerHTML = result.value;
+          } catch (e) {
+            console.warn('Auto language detection failed:', e);
+            language = 'auto';
+          }
+        }
       }
 
       // Create a label element to display the language
