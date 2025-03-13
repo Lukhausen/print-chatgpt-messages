@@ -9,6 +9,22 @@
     display: none;
   }
   
+  /* Ensure consistent font rendering across all devices */
+  body, #preview {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
+  }
+  
+  /* Ensure headings use system fonts that are available on all devices */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
+    font-weight: bold !important;
+  }
+  
+  /* Ensure code elements use widely available monospace fonts */
+  pre, code, kbd {
+    font-family: Consolas, 'Courier New', monospace !important;
+  }
+  
   #preview { 
     width: 100% !important; 
     height: auto !important;

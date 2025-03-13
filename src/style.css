@@ -5,11 +5,11 @@
    1. Core Variables
    ========================================================================== */
 :root {
-  /* Fonts */
-  --font-primary: 'Funnel Sans', sans-serif;
-  --font-headings: 'Montserrat', sans-serif;
-  --font-content: 'Open Sans', sans-serif;
-  --font-code: 'Source Code Pro', monospace;
+  /* Fonts - Using system fonts only for better print compatibility */
+  --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-headings: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-content: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-code: Consolas, 'Courier New', monospace;
   
   /* Colors */
   --color-bg: #fff;
